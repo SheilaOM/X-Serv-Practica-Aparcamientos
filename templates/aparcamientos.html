@@ -1,0 +1,38 @@
+{% extends "plantilla.html" %}
+
+<!-- Desplegable ->  http://michelletorres.mx/listas-desplegables-en-los-formularios-html/ -->
+
+{% block boton %}
+    <form action='/aparcamientos' method='POST'>
+        <select name='DIST'>\n\t<option selected value='0'> Todos los distritos</option>
+        {% for distrito in dist %}
+            {% if distrito == "" %}
+                <option value={{forloop.counter}}>Sin distrito especificado</option>
+            {% else %}
+                <option value={{forloop.counter}}>{{distrito}}</option>
+            {% endif %}
+        {% endfor %}
+        </optgroup>
+    </select><input class='button' type='submit' value='Buscar'>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <br/><h4>{{titDis|safe}}</h4><br/>
+    {% for aparc in list %}
+        <div class='featurebox_center'>
+        <p1>{{aparc.nombre}}</p1><br/><h7><a href='/aparcamientos/{{aparc.id}}'>Accede a su página</a></h7>
+        {% if user.is_authenticated %}
+            {% if aparc in selec %}
+                <div id="button_div">
+                    <form action='/deseleccionar' method='POST'><button class='buttonSelec' type='submit' name='selec' value='{{ aparc.nombre }}'>Deseleccionar</button></form>
+                </div>
+            {% else %}
+                <div id="button_div">
+                    <form action='/seleccionar' method='POST'><button class='buttonSelec' type='submit' name='selec' value='{{ aparc.nombre }}'>Seleccionar</button></form>
+                </div>
+            {% endif %}
+        {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

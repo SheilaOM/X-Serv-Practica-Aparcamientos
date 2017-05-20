@@ -1,0 +1,58 @@
+{% extends "plantilla.html" %}
+
+{% block left_content %}
+    {% if user.is_authenticated and user.username == userpag %}
+        <div id="left_side">
+            <h3>PERSONALIZA TU PÁGINA</h3>
+            <h5><form action='/cambiarTitulo?user={{userpag}}' method='POST'>
+            Título de la página: <input type='text' name='titPag' size="9"><br/>
+            <input class='button' type='submit' value='Enviar'></form><br/></h5>
+
+            <h4>Diseño de la página</h4>
+            <h5><form action='/cambiarEstilo?user={{userpag}}' method='POST'>
+            Tamaño de letra: <input type='text' name='tamLet' size="9">
+            Color de fondo:
+            <select name='COLOR'>\n\t<option selected value='0'> Selecciona color</option>
+                    <option value='#000000'>Negro</option>
+                    <option value='#FFFFFF'>Blanco</option>
+                    <option value='#00FF00'>Verde</option>
+                    <option value='#00FFFF'>Azul</option>
+                    <option value='#FF0000'>Rojo</option>
+                    <option value='#FFFF00'>Amarillo</option>
+                    <option value='#CC00FF'>Morado</option>
+                    <option value='#FF9900'>Naranja</option>
+
+
+            </optgroup>
+            <input class='button' type='submit' value='Enviar'></form></h5><br/>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block boton %}
+    <form action='{{ userpag }}/xml' method='POST'>
+    <button class='button' type='submit' name='boton'>Generar XML</button></form><br/>
+{% endblock %}
+
+
+{% block content %}
+    {% for aparc in selec %}
+        <div class='featurebox_center'><p1><a href='{{ aparc.aparcamiento.url }}'>{{ aparc.aparcamiento.nombre }}</a></p1><br/>
+        <h7>{{aparc.aparcamiento.direccion.claseVia}} {{aparc.aparcamiento.direccion.nombreVia}} {{aparc.aparcamiento.direccion.numero}}
+        {{aparc.aparcamiento.direccion.localidad}} ({{aparc.aparcamiento.direccion.provincia}}) {{aparc.aparcamiento.direccion.cp}}
+        <a href='/aparcamientos/{{aparc.aparcamiento.id}}'>Mas información</a><br/>
+        Seleccionado: {{ aparc.fecha }}</h7>
+        {% if user.is_authenticated and user.username == aparc.usuario.nombre %}
+            <div id="button_div">
+                <form action='/deseleccionar' method='POST'><button class='buttonSelec' type='submit' name='selec' value='{{ aparc.aparcamiento.nombre }}'>Deseleccionar</button></form>
+            </div>
+        {% endif %}
+        </div>
+    {% endfor %}
+
+    {% if id == 0 %}
+        <br/><h5><a href='/{{userpag}}'>Volver al prinpio</a></h5><br/>
+    {% elif id != 0 %}
+        <br/><h5><a href='/{{userpag}}?id={{id}}'>Mostrar siguientes</a></h5><br/>
+    {% endif %}
+{% endblock %}

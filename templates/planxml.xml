@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+
+<aparcamientos>
+    <informacion>
+        <descripcion> Aparcamientos seleccionados por el usuario {{ user }} </descripcion>
+    </informacion>
+    {% for sel in selec %}
+        <aparcamiento>
+            <nombre>{{sel.aparcamiento.nombre}}</nombre>
+            <descripcion>{{sel.aparcamiento.descripcion}}</descripcion>
+            <accesibilidad>{{sel.aparcamiento.accesible}}</accesibilidad>
+            <dirección>
+                <claseVia>{{sel.aparcamiento.direccion.claseVia}}</claseVia>
+                <nombreVia>{{sel.aparcamiento.direccion.nombreVia}}</nombreVia>
+                <numero>{{sel.aparcamiento.direccion.numero}}</numero>
+                <localidad>{{sel.aparcamiento.direccion.localidad}}</localidad>
+                <provincia>{{sel.aparcamiento.direccion.provincia}}</provincia>
+                <codPostal>{{sel.aparcamiento.direccion.cp}}</codPostal>
+                <barrio>{{sel.aparcamiento.barrio}}</barrio>
+                <distrito>{{sel.aparcamiento.distrito}}</distrito>
+                <latitud>{{sel.aparcamiento.latitud}}</latitud>
+                <longitud>{{sel.aparcamiento.longitud}}</longitud>
+            </dirección>
+            <datosContacto>
+                {% if sel.aparcamiento.datosContacto.telefono != "" %}
+                    <telefono>{{sel.aparcamiento.datosContacto.telefono}}</telefono>
+                {% endif %}
+                {% if sel.aparcamiento.datosContacto.email != "" %}
+                    <email>{{sel.aparcamiento.datosContacto.email}}</email>
+                {% endif %}
+            </datosContacto>
+            <url>{{sel.aparcamiento.url}}</url>
+        </aparcamiento>
+    {% endfor %}
+</aparcamientos>

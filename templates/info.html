@@ -1,0 +1,38 @@
+{% extends "plantilla.html" %}
+
+{% block content %}
+    <h5>DIRECCIÓN: </h5><h6>{{aparc.direccion.claseVia}} {{aparc.direccion.nombreVia}}, {{aparc.direccion.numero}},
+    {{aparc.direccion.localidad}} ({{aparc.direccion.provincia}}) {{aparc.direccion.cp}}</h6><br/>
+    <h5>BARRIO: </h5><h6>{{aparc.barrio}}</h6><br/>
+    <h5>DISTRITO: </h5><h6>{{aparc.distrito}}</h6><br/>
+    <h5>LATITUD: </h5><h6>{{aparc.latitud}}</h6><br/>
+    <h5>LONGITUD: </h5><h6>{{aparc.longitud}}</h6><br/>
+    <h5>ACCESIBLE: </h5><h6>
+    {% if aparc.accesible == 1 %}
+        Sí
+    {% elif aparc.accesible == 0 %}
+        No
+    {% endif %}
+    </h6><br/>
+    <h5>DESCRIPCION: </h5><h6>{{aparc.descripcion}}</h6><br/>
+    <h5>TELEFONO: </h5><h6>{{aparc.datosContacto.telefono}}</h6><br/>
+    <h5>EMAIL: </h5><h6>{{aparc.datosContacto.email}}</h6><br/>
+
+    <br/><h4>COMENTARIOS:</h4><br/>
+    {% if numcomen == 0 %}
+        <h6>No hay comentarios para este aparcamiento</h6><br/>
+    {% else %}
+        {% for comen in comentarios %}
+            <div class='featurebox_coments'>
+                <h6><i>"{{comen.texto}}"</i></h6>
+            </div><br/>
+
+        {% endfor %}
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <h5><form action='/addComentario?ap={{aparc.id}}' method='POST'>
+        Añade tu comentario:<br/> <textarea type='text' name='comen' cols="50" rows="5"></textarea><br/>
+        <input class='button' type='submit' value='Enviar'></form><br/></h5>
+    {% endif %}
+{% endblock %}

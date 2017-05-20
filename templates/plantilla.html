@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+Copyright: Darren Hester 2006, http://www.designsbydarren.com
+License: Released Under the "Creative Commons License",
+http://creativecommons.org/licenses/by-nc/2.5/
+-->
+
+<head>
+
+<!-- Meta Data -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="description" content="Short description of your site here." />
+<meta name="keywords" content="keywords, go, here, seperated, by, commas" />
+
+<!-- Site Title -->
+<title>Aparcamientos Madrid</title>
+
+<!-- Link to Style External Sheet -->
+<link rel="icon" type="image/png" href="http://www.grotta.it/locandine/P%20PARCHEGGIO.jpg" />
+<link href="/css/style.css" type="text/css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+<div id="page_wrapper">
+
+<div id="header_wrapper">
+
+<div id="header">
+
+<h1>Aparcamientos<font color="#FFDF8C">Madrid</font></h1>
+<h2>Toda la información de los aparcamientos <br/> de tu ciudad</h2>
+
+</div>
+
+<div id="navcontainer">
+
+<ul id="navlist">
+<li id="active"><a href="/"{{ curr1|safe }}>Inicio</a></li>
+<li><a href="/aparcamientos"{{ curr2|safe }}>Todos</a></li>
+<li><a href="/about"{{ curr3|safe }}>About</a></li>
+</ul>
+</div>
+
+</div>
+
+{% block left_content %}{% endblock %}
+
+<div id="right_side">
+
+<h3>LOGIN</h3>
+    {% if user.is_authenticated %}
+        <h4>Hola {{user.username|safe}}<br/><br/></h4>
+        <h5><form action='/logout' method='POST'>
+        <button class='button' type='submit'>Log out</button></form><h5><br/>
+    {% else %}
+        <h4>Introduce tu usuario<br/><br/></h4>
+        <h5><form action='/login' method='POST'>
+        Usuario: <input type='text' name='user' size="9"><br/>
+        Contraseña: <input type='text' name='pass' size="9">
+        <input class='button' type='submit' value='Entrar'></form></h5><br/>
+    {% endif %}
+</div>
+
+<div id="content">
+
+<h3>{{ titulo|safe }}</h3>
+{% block boton %}{% endblock %}
+{{ cuerpo|safe }}
+
+{% block content %}{% endblock %}
+
+
+<div id="footer">
+Esta aplicación utiliza datos del portal de datos abiertos de la ciudad de Madrid
+<br />
+<a href="http://datos.munimadrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=xml&file=0&filename=202584-0-aparcamientos-residentes&mgmtid=e84276ac109d3410VgnVCM2000000c205a0aRCRD&preview=full">Acceso a los datos (XML)</a> |
+<a href="http://datos.madrid.es/portal/site/egob/menuitem.c05c1f754a33a9fbe4b2e4b284f1a5a0/?vgnextoid=e84276ac109d3410VgnVCM2000000c205a0aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD&vgnextfmt=default">Descripción de los datos</a>
+
+</div>
+
+</body>
+
+</html>

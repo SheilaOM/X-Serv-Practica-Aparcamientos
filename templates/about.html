@@ -1,0 +1,31 @@
+{% extends "plantilla.html" %}
+
+{% block content %}
+    <h5>Autoría de la práctica:</h5>
+    <h6>
+        Nombre: Sheila Oliva Muñoz<br/>
+        Titulación: Ingeniería en Tecnologías de Telecomunicación<br/>
+    </h6>
+    <br/>
+    <h5>Funcionamiento de la práctica:</h5>
+    <h6>
+        La aplicación descarga información sobre aparcamientos de la comunidad de Madrid
+        (disponibles públicamente en formato XML en el portal de datos abiertos de Madrid)
+        y la ofrece a los usuarios para que puedan seleccionar los que les parezcan más interesantes
+        y comentar sobre ellos.<br/><br/>
+        Cualquier usuario (autenticado o no) podrá ver los listados de aparcamientos y
+        toda la información y comentarios disponibles sobre éstos, y además podrá acceder a las páginas
+        personales de otros usuarios y ver qué aparcamientos han seleccionado.<br/><br/>
+        Los usuarios autenticados, además de todas las funciones que puede hacer un usuarios
+        sin autenticar, podrá seleccionar los aparcamientos que quiera (y que aparecerán en
+        su página personal) y comentar en cualquier aparcamiento.<br/><br/>
+        Si un usuario autenticado accede a su propia página personal, le aparecerá un formulario
+        en el que podrá modificar el nombre de su página y el estilo CSS de todo el sitio
+        (tamaño de letra y color de fondo). Una vez que el usuario sale de su cuenta,
+        el estilo CSS del sitio volverá a ser el estilo por defecto. Si el usuario vuelve
+        a entrar en su cuenta, de nuevo aparecerá el estilo que eligió anteriormente.
+        <br/><br/>
+    </h6>
+
+
+{% endblock %}
