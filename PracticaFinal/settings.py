@@ -1,3 +1,10 @@
+#############################
+# Seila Oliva Muñoz         #
+#############################
+# Ingeniería en Tecnologías #
+# de la Telecomunicación    #
+#############################
+
 """
 Django settings for PracticaFinal project.
 
