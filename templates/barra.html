@@ -1,3 +1,11 @@
+<!--
+#############################
+# Seila Oliva Muñoz         #
+#############################
+# Ingeniería en Tecnologías #
+# de la Telecomunicación    #
+############################# -->
+
 {% extends "plantilla.html" %}
 
 background="child_background.jpg" class="child_bg_class"
@@ -9,32 +17,53 @@ background="child_background.jpg" class="child_bg_class"
     </div>
 {% endblock %}
 
+
 {% block boton %}
-    <form action='/' method='POST'>
-    <button class='button' type='submit' name='boton' value='{{ value }}'>{{ texto }}</button></form><br/>
+    {% if numAparc != 0 %}
+        <form action='/' method='POST'>
+        <button class='button' type='submit' name='boton' value='{{ value }}'>{{ texto }}</button></form><br/>
+    {% endif %}
 {% endblock %}
 
 
 {% block content %}
+<!-- Si no hay aparcamientos cargados, aparece un botón para cargarlos -->
     {% if numAparc == 0 %}
-        <form action='/update' method='GET'><button type='submit'>Cargar datos</button></form>
+        <h6>Aún no hay aparcamientos.</h6>
+        <br/><form action='/update' method='GET'><button class='button' type='submit'>Cargar datos</button></form>
     {% else %}
+        <!-- Listado de aparcamientos -->
         {% for aparc in list %}
             <div class='featurebox_center'><p1><a href='{{ aparc.url }}'>{{ aparc.nombre }}</a></p1><br/>
-            <h7>{{aparc.direccion.claseVia}} {{aparc.direccion.nombreVia}} {{aparc.direccion.numero}} {{aparc.direccion.localidad}} ({{aparc.direccion.provincia}}) {{aparc.direccion.cp}}
-            <a href='/aparcamientos/{{aparc.id}}'>Mas información</a></h7>
-            {% if user.is_authenticated %}
-                {% if aparc in selec %}
-                    <div id="button_div">
-                        <form action='/deseleccionar' method='POST'><button class='buttonSelec' type='submit' name='selec' value='{{ aparc.nombre }}'>Deseleccionar</button></form>
-                    </div>
-                {% else %}
-                    <div id="button_div">
-                        <form action='/seleccionar' method='POST'><button class='buttonSelec' type='submit' name='selec' value='{{ aparc.nombre }}'>Seleccionar</button></form>
-                    </div>
+                <h7>{{aparc.direccion.claseVia}} {{aparc.direccion.nombreVia}} {{aparc.direccion.numero}} {{aparc.direccion.localidad}} ({{aparc.direccion.provincia}}) {{aparc.direccion.cp}}
+                    <a href='/aparcamientos/{{aparc.id}}'>Mas información</a>
+                </h7>
+                <div id="punt">
+                    Puntuación: {{aparc.puntuacion}}
+                </div>
+                <!-- Botones para seleccionar/deseleccionar aparcamientos -->
+                {% if user.is_authenticated %}
+                    {% if aparc in selec %}
+                        <div id="button_div">
+                            <form action='/deseleccionar?pag=/' method='POST'><button class='buttonSelec' type='submit' name='selec' value='{{ aparc.nombre }}'>Deseleccionar</button></form>
+                        </div>
+                    {% else %}
+                        <div id="button_div">
+                            <form action='/seleccionar?pag=/' method='POST'><button class='buttonSelec' type='submit' name='selec' value='{{ aparc.nombre }}'>Seleccionar</button></form>
+                        </div>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
             </div>
         {% endfor %}
     {% endif %}
+
+    <!-- Botones para obtener canales XML y JSON -->
+    <div>
+        <form action='/canalxml' method='POST'>
+            <button class='buttonxml' type='submit' name='boton'>Generar XML</button>
+        </form>
+        <form action='/canaljson' method='POST'>
+            <button class='buttonxml' type='submit' name='boton'>Generar JSON</button>
+        </form>
+    </div>
 {% endblock %}

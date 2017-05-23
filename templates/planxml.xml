@@ -1,35 +1,47 @@
+<!--
+#############################
+# Seila Oliva Muñoz         #
+#############################
+# Ingeniería en Tecnologías #
+# de la Telecomunicación    #
+############################# -->
+
 <?xml version="1.0" ?>
 
 <aparcamientos>
     <informacion>
-        <descripcion> Aparcamientos seleccionados por el usuario {{ user }} </descripcion>
+        {% if desc == "usuario" %}
+            Aparcamientos seleccionados por el usuario {{ user }}
+        {% elif desc == "barra" %}
+            Aparcamientos más comentados
+        {% endif %}
     </informacion>
-    {% for sel in selec %}
+    {% for aparc in list %}
         <aparcamiento>
-            <nombre>{{sel.aparcamiento.nombre}}</nombre>
-            <descripcion>{{sel.aparcamiento.descripcion}}</descripcion>
-            <accesibilidad>{{sel.aparcamiento.accesible}}</accesibilidad>
+            <nombre>{{aparc.nombre}}</nombre>
+            <descripcion>{{aparc.descripcion}}</descripcion>
+            <accesibilidad>{{aparc.accesible}}</accesibilidad>
             <dirección>
-                <claseVia>{{sel.aparcamiento.direccion.claseVia}}</claseVia>
-                <nombreVia>{{sel.aparcamiento.direccion.nombreVia}}</nombreVia>
-                <numero>{{sel.aparcamiento.direccion.numero}}</numero>
-                <localidad>{{sel.aparcamiento.direccion.localidad}}</localidad>
-                <provincia>{{sel.aparcamiento.direccion.provincia}}</provincia>
-                <codPostal>{{sel.aparcamiento.direccion.cp}}</codPostal>
-                <barrio>{{sel.aparcamiento.barrio}}</barrio>
-                <distrito>{{sel.aparcamiento.distrito}}</distrito>
-                <latitud>{{sel.aparcamiento.latitud}}</latitud>
-                <longitud>{{sel.aparcamiento.longitud}}</longitud>
+                <claseVia>{{aparc.direccion.claseVia}}</claseVia>
+                <nombreVia>{{aparc.direccion.nombreVia}}</nombreVia>
+                <numero>{{aparc.direccion.numero}}</numero>
+                <localidad>{{aparc.direccion.localidad}}</localidad>
+                <provincia>{{aparc.direccion.provincia}}</provincia>
+                <codPostal>{{aparc.direccion.cp}}</codPostal>
+                <barrio>{{aparc.barrio}}</barrio>
+                <distrito>{{aparc.distrito}}</distrito>
+                <latitud>{{aparc.latitud}}</latitud>
+                <longitud>{{aparc.longitud}}</longitud>
             </dirección>
             <datosContacto>
-                {% if sel.aparcamiento.datosContacto.telefono != "" %}
-                    <telefono>{{sel.aparcamiento.datosContacto.telefono}}</telefono>
+                {% if aparc.datosContacto.telefono != "" %}
+                    <telefono>{{aparc.datosContacto.telefono}}</telefono>
                 {% endif %}
-                {% if sel.aparcamiento.datosContacto.email != "" %}
-                    <email>{{sel.aparcamiento.datosContacto.email}}</email>
+                {% if aparc.datosContacto.email != "" %}
+                    <email>{{aparc.datosContacto.email}}</email>
                 {% endif %}
             </datosContacto>
-            <url>{{sel.aparcamiento.url}}</url>
+            <url>{{aparc.url}}</url>
         </aparcamiento>
     {% endfor %}
 </aparcamientos>

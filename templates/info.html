@@ -1,6 +1,22 @@
+<!--
+#############################
+# Seila Oliva Muñoz         #
+#############################
+# Ingeniería en Tecnologías #
+# de la Telecomunicación    #
+############################# -->
+
 {% extends "plantilla.html" %}
 
 {% block content %}
+<!-- Muestra la puntuación del aparcamiento y un botón para aumentar esta puntuación -->
+    <div id="punt">
+        <info>Puntuación: {{aparc.puntuacion}}
+        <form action='/punt?ap={{aparc.id}}' method='POST'>
+        <input class='buttonPunt' type='submit' value='+1'></form></info>
+    </div>
+
+<!-- Información sobre el aparcamiento -->
     <h5>DIRECCIÓN: </h5><h6>{{aparc.direccion.claseVia}} {{aparc.direccion.nombreVia}}, {{aparc.direccion.numero}},
     {{aparc.direccion.localidad}} ({{aparc.direccion.provincia}}) {{aparc.direccion.cp}}</h6><br/>
     <h5>BARRIO: </h5><h6>{{aparc.barrio}}</h6><br/>
@@ -15,9 +31,15 @@
     {% endif %}
     </h6><br/>
     <h5>DESCRIPCION: </h5><h6>{{aparc.descripcion}}</h6><br/>
-    <h5>TELEFONO: </h5><h6>{{aparc.datosContacto.telefono}}</h6><br/>
-    <h5>EMAIL: </h5><h6>{{aparc.datosContacto.email}}</h6><br/>
+    {% if aparc.datosContacto.telefono != "0" and  aparc.datosContacto.telefono != ""%}
+        <h5>TELEFONO: </h5><h6>{{aparc.datosContacto.telefono}}</h6><br/>
+    {% endif %}
 
+    {% if aparc.datosContacto.email != "" %}
+        <h5>EMAIL: </h5><h6>{{aparc.datosContacto.email}}</h6><br/>
+    {% endif %}
+
+<!-- Muestra los comentarios del aparcamiento -->
     <br/><h4>COMENTARIOS:</h4><br/>
     {% if numcomen == 0 %}
         <h6>No hay comentarios para este aparcamiento</h6><br/>
@@ -26,13 +48,14 @@
             <div class='featurebox_coments'>
                 <h6><i>"{{comen.texto}}"</i></h6>
             </div><br/>
-
         {% endfor %}
     {% endif %}
 
+<!-- Si el usuario está autenticado, aparece formulario para añadir comentario -->
     {% if user.is_authenticated %}
         <h5><form action='/addComentario?ap={{aparc.id}}' method='POST'>
-        Añade tu comentario:<br/> <textarea type='text' name='comen' cols="50" rows="5"></textarea><br/>
-        <input class='button' type='submit' value='Enviar'></form><br/></h5>
+            Añade tu comentario:<br/> <textarea type='text' name='comen' cols="50" rows="5"></textarea><br/>
+            <input class='button' type='submit' value='Enviar'>
+        </form><br/></h5>
     {% endif %}
 {% endblock %}

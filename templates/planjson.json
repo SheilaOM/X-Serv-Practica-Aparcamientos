@@ -1,0 +1,28 @@
+{
+    "aparcamientos": {
+        "informacion": {% if desc == "usuario" %}"Aparcamientos seleccionados por el usuario {{ user }}"{% elif desc == "barra" %}"Aparcamientos mas comentados"{% endif %},
+        {% for aparc in list %}
+        "aparcamiento":{
+            "nombre": "{{aparc.nombre}}",
+            "descripcion": "{{aparc.descripcion}}",
+            "accesibilidad": "{{aparc.accesibilidad}}",
+            "direccion": {
+                "claseVia": "{{aparc.direccion.claseVia}}",
+                "nombreVia": "{{aparc.direccion.nombreVia}}",
+                "numero": "{{aparc.direccion.numero}}",
+                "localidad": "{{aparc.direccion.localidad}}",
+                "provincia": "{{aparc.direccion.provincia}}",
+                "codPostal": {{aparc.direccion.cp}},
+                "barrio": "{{aparc.barrio}}",
+                "distrito": "{{aparc.distrito}}",
+                "latitud": "{{aparc.latitud}}",
+                "longitud": "{{aparc.longitud}}"
+            },
+            "datosContacto": {
+                {% if aparc.datosContacto.telefono != "" %}"telefono": "{{aparc.datosContacto.telefono}},"{% endif %}
+                {% if aparc.datosContacto.email != "" %}"email": "{{aparc.datosContacto.email}}"{% endif %}
+            },
+            "url": "{{aparc.url}}"
+        }{% endfor %}
+    }
+}
