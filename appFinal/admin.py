@@ -1,3 +1,10 @@
+#############################
+# Seila Oliva Muñoz         #
+#############################
+# Ingeniería en Tecnologías #
+# de la Telecomunicación    #
+#############################
+
 from django.contrib import admin
 
 # Register your models here.

@@ -1,3 +1,10 @@
+#############################
+# Seila Oliva Muñoz         #
+#############################
+# Ingeniería en Tecnologías #
+# de la Telecomunicación    #
+#############################
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from xml.sax.handler import ContentHandler
@@ -191,10 +198,11 @@ def update(request):
 
 @csrf_exempt
 def barra(request):
+#Descarta los aparcamientos sin comentarios y ordena el resto por número de comentarios
     aparc_coment = Aparcamiento.objects.exclude(numComents=0)
     list_coment = aparc_coment.order_by('-numComents')
 
-
+#Obtiene todos los tipos de aparcamiento o sólo los accesibles
     if request.method == "GET" or (request.method == "POST" and request.POST.get('boton') == '2'):
         value = 1
         texto = "Solo accesibles"
@@ -205,11 +213,13 @@ def barra(request):
         texto = "Todos"
         list_aparcamientos = list_coment.filter(accesible=1)
 
+#Coge sólo los 5 aparcamientos más comentados
     if len(list_aparcamientos) > 5:
         list_aparcamientos = list_aparcamientos[0:5]
 
     numAparc = Aparcamiento.objects.count()
 
+#Obtiene los usuarios para indicar las páginas personales de cada uno
     usuarios = User.objects.all()
     pagper = ""
     for us in usuarios:
@@ -223,6 +233,8 @@ def barra(request):
             nompag = "Página de " + us.username
         pagper += us.username + ": <a href='/" + us.username + "'>" + nompag + "</a></p1><br/><br/>"
 
+#Comprueba si el usuario está autenticado, y en ese caso, obtiene los aparcamientos que ha seleccionado
+#para poner botón de seleccionar/deseleccionar
     list_selec = []
     if request.user.is_authenticated():
         us_selec = Usuario.objects.get(nombre=request.user)
@@ -250,6 +262,8 @@ def mylogin(request):
         username = request.POST['user']
         password = request.POST['pass']
         user = authenticate(username=username, password=password)
+#Comprueba si el usuario introducido es válido y lo loguea.
+#Comprueba si el usuario está ya en la base de datos, y si no está se introduce
         if user is not None:
             if user.is_active:
                 login(request, user)
@@ -261,6 +275,7 @@ def mylogin(request):
                     usuario.save()
     return HttpResponseRedirect('/')
 
+
 @csrf_exempt
 def mylogout(request):
     if request.method == "POST":
@@ -271,10 +286,12 @@ def mylogout(request):
 @csrf_exempt
 def aparcamientos(request):
     list_aparcamientos = Aparcamiento.objects.all()
-    list_dist = list(set(Aparcamiento.objects.values_list('distrito',flat=True)))
+    list_dist = list(set(Aparcamiento.objects.values_list('distrito',flat=True)))   #Obtiene lista de distritos
 
     tit = "Todos los aparcamientos"
     list_aparcamientos_selec = list_aparcamientos
+
+#Llega un POST con el id del distrito buscado. Selecciona los aparcamientos de dicho distrito.
     if request.method == "POST":
         id = int(request.POST['DIST'])
         if id != 0:
@@ -284,6 +301,8 @@ def aparcamientos(request):
             else:
                 tit = "Aparcamientos en el distrito " + list_dist[id-1]
 
+#Comprueba si el usuario está autenticado, y en ese caso, obtiene los aparcamientos que ha seleccionado
+#para poner botón de seleccionar/deseleccionar
     list_selec = []
     if request.user.is_authenticated():
         us_selec = Usuario.objects.get(nombre=request.user)
@@ -294,17 +313,18 @@ def aparcamientos(request):
 
     plantilla = get_template("aparcamientos.html")
     contexto = Context({'selec': list_selec,
-                    'dist': list_dist,
-                    'list':list_aparcamientos_selec,
-                    'titDis': tit,
-                    'user': request.user,
-                    'curr2': 'id="current"',
-                    'titulo':'Listado de aparcamientos'})
+                        'dist': list_dist,
+                        'list':list_aparcamientos_selec,
+                        'titDis': tit,
+                        'user': request.user,
+                        'curr2': 'id="current"',
+                        'titulo':'Listado de aparcamientos'})
     return HttpResponse(plantilla.render(contexto))
 
-def info(request, id):
-    aparc = Aparcamiento.objects.get(id=id)
 
+def info(request, id):
+#Obtiene el aparcamiento que corresponde al id y sus comentarios, se lo pasa a la plantilla
+    aparc = Aparcamiento.objects.get(id=id)
     comentarios = Comentarios.objects.filter(aparcamiento=aparc)
 
     plantilla = get_template("info.html")
@@ -318,36 +338,44 @@ def info(request, id):
 
 @csrf_exempt
 def seleccionar(request):
+#En la Query String viene la página donde se ha hecho la selección para redirigir de nuevo a esa página
+    pag = request.GET.get('pag')
+#Añade una selección a la base de datos
     if request.method == "POST":
         aparc = Aparcamiento.objects.get(nombre=request.POST['selec'])
         usuario = Usuario.objects.get(nombre=request.user.username)
         fecha = datetime.now()
         selec = Seleccionado(usuario=usuario, fecha=fecha, aparcamiento=aparc)
         selec.save()
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(pag)
+
 
 @csrf_exempt
 def deseleccionar(request):
+#En la Query String viene la página donde se ha hecho la selección para redirigir de nuevo a esa página
+
+    pag = request.GET.get('pag')
+#Elimina una selección de la base de datos
     if request.method == "POST":
         aparc = Aparcamiento.objects.get(nombre=request.POST['selec'])
         usuario = Usuario.objects.get(nombre=request.user.username)
         selec = Seleccionado.objects.get(aparcamiento=aparc, usuario=usuario)
         selec.delete()
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(pag)
+
 
 def usuario(request, user):
+#En la Query String viene un id para identificar qué aparcamientos tiene que mostrar
     id = request.GET.get('id')
-
     if id == None:
         id = 0
     else:
         id = int(id)
 
-    usuarios = User.objects.all()
+#Comprueba si el usuario de la url es correcto, y selecciona 5 comentarios seleccionados por ese usuario
+#Con el id de antes, mira qué comentarios tiene que mostrar
     usernames = list(User.objects.values_list('username',flat=True))
-    list_selec = []
     if user in usernames:
-        pagper = ""
         try:
             usuario = Usuario.objects.get(nombre=user)
             if usuario.tituloPag != "":
@@ -360,34 +388,42 @@ def usuario(request, user):
             if id >= Seleccionado.objects.filter(usuario=usuario).count():
                 id = 0
             aparc_selec = list(set(aparc_user.values_list('aparcamiento',flat=True)))
-            for ap in aparc_selec:
-                list_selec.append(Aparcamiento.objects.get(id=ap))
 
+            contexto = Context({'titulo': nompag,
+                                'selec': aparc_user,
+                                'user': request.user,
+                                'userpag': user,
+                                'id': id})
+#Si un usuario no aparece aún en la base de datos es porque aún no ha hecho login,
+#y por tanto no ha podido selecccionar aparcamientos (sólo aparecerá el nombre de la página)
         except Usuario.DoesNotExist:
             nompag = "Página de " + user
-    else:
-        nompag = "No existe el usuario"
+            contexto = Context({'titulo': nompag,
+                                'user': request.user,
+                                'userpag': user,
+                                'id': id})
 
-    plantilla = get_template("usuario.html")
-    contexto = Context({'titulo': nompag,
-                    'selec': aparc_user,
-                    'user': request.user,
-                    'userpag': user,
-                    'id': id})
-    return HttpResponse(plantilla.render(contexto))
+        plantilla = get_template("usuario.html")
+        return HttpResponse(plantilla.render(contexto))
+
+    else:
+        return HttpResponse('Not Found 404', status=404)
 
 
 def about(request):
-    cuerpo = "SHEILA OLIVA MUÑOZ<br/><br/>FUNCIONAMIENTO......"
     plantilla = get_template("about.html")
     contexto = Context({'titulo': "Información",
+                        'user': request.user,
                         'curr3': 'id="current"',})
     return HttpResponse(plantilla.render(contexto))
 
 
 @csrf_exempt
 def cambioTitulo(request):
+#En la Query String viene el nombre de usuario para después volver a redirigir a su página
+#y para saber en qué usuario cambiar el título
     username = request.GET.get('user')
+#Guarda el título el la base de datos con el usuaio correspondiente
     if request.method == "POST":
         titulo = request.POST['titPag']
         user = Usuario.objects.get(nombre=username)
@@ -398,7 +434,10 @@ def cambioTitulo(request):
 
 @csrf_exempt
 def cambioEstilo(request):
+#En la Query String viene el nombre de usuario para después volver a redirigir a su página
+#y para saber en qué usuario cambiar el título
     username = request.GET.get('user')
+#Guarda el estilo el la base de datos con el usuaio correspondiente
     if request.method == "POST":
         tamano = request.POST['tamLet']
         color = request.POST['COLOR']
@@ -410,9 +449,13 @@ def cambioEstilo(request):
         user.save()
     return HttpResponseRedirect('/' + username)
 
+
 @csrf_exempt
 def addComentario(request):
+#En la Query String viene el id del aparcamiento para después volver a redirigir a su página
+#y para saber en qué aparcamiento añadir el comentario
     aparcid = request.GET.get('ap')
+#Guarda el comentario con el aparcamiento correspondiente
     if request.method == "POST":
         aparc = Aparcamiento.objects.get(id=aparcid)
         aparc.numComents = aparc.numComents + 1
@@ -422,36 +465,80 @@ def addComentario(request):
         comentario.save()
     return HttpResponseRedirect('/aparcamientos/' + aparcid)
 
+
 @csrf_exempt
-def xml(request, user):
+def usercanal(request, user, tipo):
+#Obtiene los aparcamientos seleccionados por el usuario para generar el canal con ellos
     if request.method == "POST":
         usuario = Usuario.objects.get(nombre=user)
         selec = Seleccionado.objects.filter(usuario=usuario)
+        list_selec = []
+        for sel in selec:
+            list_selec.append(sel.aparcamiento)
 
         contexto = Context({'user': user,
-                            'selec': selec})
+                            'desc': 'usuario',
+                            'list': list_selec})
+#En función del tipo de canal que pida, selecciona una plantilla u otra
+        if tipo == "xml":
+            plantilla = get_template("planxml.xml")
+            return HttpResponse(plantilla.render(contexto), content_type="text/xml")
+        elif tipo == "json":
+            plantilla = get_template("planjson.json")
+            return HttpResponse(plantilla.render(contexto), content_type="text/json")
+
+@csrf_exempt
+def barracanal(request, tipo):
+#Selecciona los 5 aparcamientos con más comentarios
+    aparc_coment = Aparcamiento.objects.exclude(numComents=0)
+    list_coment = aparc_coment.order_by('-numComents')
+    if len(list_coment) > 5:
+        list_coment = list_coment[0:5]
+
+    contexto = Context({'desc': 'barra',
+                        'list': list_coment})
+
+#En función del tipo de canal que pida, selecciona una plantilla u otra
+    if tipo == "xml":
         plantilla = get_template("planxml.xml")
         return HttpResponse(plantilla.render(contexto), content_type="text/xml")
+    elif tipo == "json":
+        plantilla = get_template("planjson.json")
+        return HttpResponse(plantilla.render(contexto), content_type="text/json")
 
 
 def css(request):
     plantilla = get_template("style.css")
+#Si el usuario está logueado, incluye en el CSS el color y el tamaño de la letra elegido por el usuario
     if request.user.is_authenticated():
         usuario = Usuario.objects.get(nombre=request.user.username)
         color = usuario.color
         letra = str(usuario.letra)
         letra2 = str(usuario.letra - 4)
-        if color != "" and letra != 0:
+        if color != "" and letra != '0':
             contexto = Context({'color': color,
-                            'letra': letra,
-                            'letra2': letra2})
-        elif color != "" and letra == 0:
+                                'letra': letra,
+                                'letra2': letra2})
+        elif color != "" and letra == '0':
             contexto = Context({'color': color})
-        elif color == "" and letra != 0:
+        elif color == "" and letra != '0':
             contexto = Context({'letra': letra,
-                            'letra2': letra2})
+                                'letra2': letra2})
         else:
             contexto = Context({})
+
         return HttpResponse(plantilla.render(contexto), content_type="text/css")
     else:
         return HttpResponse(plantilla.render(), content_type="text/css")
+
+
+@csrf_exempt
+def sumpunt(request):
+#En la Query String viene el id del aparcamiento en el que sumar la puntuación y
+#donde redirigir después
+    aparcid = request.GET.get('ap')
+    aparc = Aparcamiento.objects.get(id=aparcid)
+    if request.method == 'POST':
+        aparc.puntuacion += 1
+        aparc.save()
+        return HttpResponseRedirect('/aparcamientos/' + aparcid)

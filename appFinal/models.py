@@ -1,3 +1,10 @@
+#############################
+# Seila Oliva Muñoz         #
+#############################
+# Ingeniería en Tecnologías #
+# de la Telecomunicación    #
+#############################
+
 from django.db import models
 
 # Create your models here.
@@ -31,6 +38,7 @@ class Aparcamiento(models.Model):
     datosContacto = models.ForeignKey(DatosContacto)
     url = models.TextField()
     numComents = models.IntegerField(default=0)
+    puntuacion = models.IntegerField(default=0)
 
 class Seleccionado(models.Model):
     usuario = models.ForeignKey(Usuario)
