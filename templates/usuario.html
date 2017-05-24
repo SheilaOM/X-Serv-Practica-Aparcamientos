@@ -14,15 +14,15 @@
         <div id="left_side">
             <h3>PERSONALIZA TU PÁGINA</h3>
             <h5><form action='/cambiarTitulo?user={{userpag}}' method='POST'>
-            Título de la página: <input type='text' name='titPag' size="9"><br/>
+            Título de la página: <br/><input type='text' name='titPag' size="9"><br/>
             <input class='button' type='submit' value='Enviar'></form><br/></h5>
 
             <h4>Diseño de la página</h4>
             <h5><form action='/cambiarEstilo?user={{userpag}}' method='POST'>
-                Tamaño de letra: <input type='text' name='tamLet' size="9">
+                Tamaño de letra: <br/><input type='text' name='tamLet' size="9"><br/>
                 <!-- Desplegable para elegir el color que se puede poner a la página. -->
                 <!-- Desplegable ->  http://michelletorres.mx/listas-desplegables-en-los-formularios-html/ -->
-                Color de fondo:
+                Color de fondo:<br/>
                 <select name='COLOR'>\n\t<option selected value='0'> Selecciona color</option>
                         <option value='#000000'>Negro</option>
                         <option value='#FFFFFF'>Blanco</option>
